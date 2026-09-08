@@ -1,31 +1,27 @@
-name: Generate Snake Animation
+name: Deploy
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
-
-  workflow_dispatch:
-
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
-  generate:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Generate Snake
-        uses: Platane/snk/svg-only@v3
-        with:
-          github_user_name: Adarsh9611
-          outputs: |
-            dist/github-snake.svg
-            dist/github-snake-dark.svg?palette=github-dark
+      - uses: actions/checkout@v4
 
-      - name: Deploy Snake
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          publish_branch: output
